@@ -1,0 +1,1241 @@
+{
+	"info": {
+		"_postman_id": "12345678-1234-1234-1234-123456789abc",
+		"name": "API Biblioteca - Colección Completa",
+		"description": "Colección completa de endpoints para la API de Biblioteca con autenticación JWT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Login Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"juan.perez@email.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como usuario regular"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Bibliotecario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"maria.gonzalez@biblioteca.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como bibliotecario"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Rodriguez\",\n  \"email\": \"carlos.rodriguez@email.com\",\n  \"telefono\": \"987654321\",\n  \"direccion\": \"Calle Principal 123\",\n  \"fechaNacimiento\": \"1995-06-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registrar un nuevo usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Validar Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/validate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"validate"
+							]
+						},
+						"description": "Validar el token de autenticación"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de autenticación y registro"
+		},
+		{
+			"name": "Libros",
+			"item": [
+				{
+					"name": "Obtener Todos los Libros",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros"
+							]
+						},
+						"description": "Obtener lista completa de libros"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Libro por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1"
+							]
+						},
+						"description": "Obtener un libro específico por su ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Libro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"El Principito\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"descripcion\": \"Una obra maestra de la literatura francesa\",\n  \"anioPublicacion\": 1943,\n  \"isbn\": \"9782070413558\",\n  \"numeroPaginas\": 96,\n  \"estado\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/libros",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros"
+							]
+						},
+						"description": "Crear un nuevo libro (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Libro",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"El Principito - Edición Especial\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"descripcion\": \"Una obra maestra de la literatura francesa - Edición conmemorativa\",\n  \"anioPublicacion\": 1943,\n  \"isbn\": \"9782070413558\",\n  \"numeroPaginas\": 96,\n  \"estado\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1"
+							]
+						},
+						"description": "Actualizar un libro existente (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Libro",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1"
+							]
+						},
+						"description": "Eliminar un libro (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Libros por Título",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/buscar/titulo?q=quijote",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"buscar",
+								"titulo"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "quijote"
+								}
+							]
+						},
+						"description": "Buscar libros que contengan el término en el título"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Libros por Autor",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/buscar/autor?autor=cervantes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"buscar",
+								"autor"
+							],
+							"query": [
+								{
+									"key": "autor",
+									"value": "cervantes"
+								}
+							]
+						},
+						"description": "Buscar libros por autor"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Libro por ISBN",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/buscar/isbn/9788467034100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"buscar",
+								"isbn",
+								"9788467034100"
+							]
+						},
+						"description": "Buscar un libro específico por su ISBN"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Libros por Estado",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/estado/DISPONIBLE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"estado",
+								"DISPONIBLE"
+							]
+						},
+						"description": "Obtener libros filtrados por estado (DISPONIBLE, PRESTADO, EN_REPARACION, PERDIDO, RETIRADO)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Libros Disponibles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/disponibles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"disponibles"
+							]
+						},
+						"description": "Obtener solo los libros disponibles para préstamo"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Libros Prestados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/prestados",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"prestados"
+							]
+						},
+						"description": "Obtener libros que están actualmente prestados"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Libros con Criterios Múltiples",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/buscar?titulo=quijote&autor=cervantes&estado=DISPONIBLE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "titulo",
+									"value": "quijote"
+								},
+								{
+									"key": "autor",
+									"value": "cervantes"
+								},
+								{
+									"key": "estado",
+									"value": "DISPONIBLE"
+								}
+							]
+						},
+						"description": "Buscar libros con múltiples criterios (título, autor, estado)"
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Estado de Libro",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"PRESTADO\""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/estado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"estado"
+							]
+						},
+						"description": "Cambiar el estado de un libro (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Libros",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/estadisticas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"estadisticas"
+							]
+						},
+						"description": "Obtener estadísticas de libros por estado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gestión de libros"
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Obtener Todos los Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios"
+							]
+						},
+						"description": "Obtener lista completa de usuarios (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"1"
+							]
+						},
+						"description": "Obtener un usuario específico por su ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Pedro\",\n  \"apellido\": \"García\",\n  \"email\": \"pedro.garcia@email.com\",\n  \"telefono\": \"111222333\",\n  \"direccion\": \"Avenida Central 789\",\n  \"fechaNacimiento\": \"1992-03-15\",\n  \"tipoUsuario\": \"USUARIO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios"
+							]
+						},
+						"description": "Crear un nuevo usuario (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Pedro Carlos\",\n  \"apellido\": \"García\",\n  \"email\": \"pedro.garcia@email.com\",\n  \"telefono\": \"111222333\",\n  \"direccion\": \"Avenida Central 789 - Apt 4B\",\n  \"fechaNacimiento\": \"1992-03-15\",\n  \"tipoUsuario\": \"USUARIO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"1"
+							]
+						},
+						"description": "Actualizar un usuario existente (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"1"
+							]
+						},
+						"description": "Eliminar un usuario (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Usuarios por Criterios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/buscar?nombre=juan&tipoUsuario=USUARIO&estado=ACTIVO",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "juan"
+								},
+								{
+									"key": "tipoUsuario",
+									"value": "USUARIO"
+								},
+								{
+									"key": "estado",
+									"value": "ACTIVO"
+								}
+							]
+						},
+						"description": "Buscar usuarios con múltiples criterios"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuarios por Tipo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/tipo/USUARIO",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"tipo",
+								"USUARIO"
+							]
+						},
+						"description": "Obtener usuarios filtrados por tipo (USUARIO, BIBLIOTECARIO)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuarios Activos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/activos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"activos"
+							]
+						},
+						"description": "Obtener solo usuarios activos"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Bibliotecarios Activos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/bibliotecarios/activos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"bibliotecarios",
+								"activos"
+							]
+						},
+						"description": "Obtener bibliotecarios activos"
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Estado de Usuario",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"INACTIVO\""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/1/estado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"1",
+								"estado"
+							]
+						},
+						"description": "Cambiar el estado de un usuario (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Promover Usuario a Bibliotecario",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/1/promover",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"1",
+								"promover"
+							]
+						},
+						"description": "Promover un usuario a bibliotecario (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/estadisticas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"estadisticas"
+							]
+						},
+						"description": "Obtener estadísticas de usuarios por tipo y estado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gestión de usuarios"
+		},
+		{
+			"name": "Préstamos",
+			"item": [
+				{
+					"name": "Obtener Todos los Préstamos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos"
+							]
+						},
+						"description": "Obtener lista completa de préstamos (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Préstamo por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"1"
+							]
+						},
+						"description": "Obtener un préstamo específico por su ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Préstamo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 1,\n  \"libroId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/prestamos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos"
+							]
+						},
+						"description": "Crear un nuevo préstamo (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Devolver Libro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"observaciones\": \"Libro devuelto en buen estado\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/1/devolver",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"1",
+								"devolver"
+							]
+						},
+						"description": "Devolver un libro prestado (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Renovar Préstamo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/1/renovar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"1",
+								"renovar"
+							]
+						},
+						"description": "Renovar un préstamo activo (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Préstamos por Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/usuario/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"usuario",
+								"1"
+							]
+						},
+						"description": "Obtener todos los préstamos de un usuario específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Préstamos por Libro",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/libro/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"libro",
+								"1"
+							]
+						},
+						"description": "Obtener todos los préstamos de un libro específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Préstamos por Estado",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/estado/ACTIVO",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"estado",
+								"ACTIVO"
+							]
+						},
+						"description": "Obtener préstamos filtrados por estado (ACTIVO, DEVUELTO, VENCIDO, RENOVADO, CANCELADO, PERDIDO)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Préstamos Activos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/activos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"activos"
+							]
+						},
+						"description": "Obtener solo los préstamos activos"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Préstamos Vencidos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/vencidos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"vencidos"
+							]
+						},
+						"description": "Obtener préstamos que han vencido"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Préstamo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"1"
+							]
+						},
+						"description": "Eliminar un préstamo (requiere rol de bibliotecario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Préstamos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/prestamos/estadisticas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prestamos",
+								"estadisticas"
+							]
+						},
+						"description": "Obtener estadísticas de préstamos por estado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gestión de préstamos"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

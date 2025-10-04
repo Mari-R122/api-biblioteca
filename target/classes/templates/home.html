@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Biblioteca - Ejercicio Universitario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="text-center mb-0">
+                            <i class="bi bi-book"></i> API Biblioteca RESTful
+                        </h2>
+                        <p class="text-center mb-0">Ejercicio Universitario - Spring Boot</p>
+                    </div>
+                    <div class="card-body">
+                        <h4>Endpoints disponibles:</h4>
+                        <hr>
+                        
+                        <h5>📚 Libros</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item"><strong>GET</strong> /api/books - Obtener todos los libros</li>
+                            <li class="list-group-item"><strong>POST</strong> /api/books - Crear nuevo libro</li>
+                            <li class="list-group-item"><strong>GET</strong> /api/books/{id} - Obtener libro por ID</li>
+                            <li class="list-group-item"><strong>PUT</strong> /api/books/{id} - Actualizar libro</li>
+                            <li class="list-group-item"><strong>DELETE</strong> /api/books/{id} - Eliminar libro</li>
+                        </ul>
+                        
+                        <h5>👥 Usuarios</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item"><strong>GET</strong> /api/users - Obtener todos los usuarios</li>
+                            <li class="list-group-item"><strong>POST</strong> /api/users - Crear nuevo usuario</li>
+                            <li class="list-group-item"><strong>GET</strong> /api/users/{id} - Obtener usuario por ID</li>
+                            <li class="list-group-item"><strong>PUT</strong> /api/users/{id} - Actualizar usuario</li>
+                            <li class="list-group-item"><strong>DELETE</strong> /api/users/{id} - Eliminar usuario</li>
+                        </ul>
+                        
+                        <h5>📖 Préstamos</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item"><strong>GET</strong> /api/loans - Obtener todos los préstamos</li>
+                            <li class="list-group-item"><strong>POST</strong> /api/loans - Crear nuevo préstamo</li>
+                            <li class="list-group-item"><strong>GET</strong> /api/loans/{id} - Obtener préstamo por ID</li>
+                            <li class="list-group-item"><strong>PUT</strong> /api/loans/{id}/return - Devolver libro</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <h6>🔧 Herramientas de desarrollo:</h6>
+                            <p class="mb-0">
+                                • <strong>Base de datos H2:</strong> <a href="/h2-console" target="_blank">http://localhost:8080/h2-console</a><br>
+                                • <strong>Usuario:</strong> sa<br>
+                                • <strong>Password:</strong> (vacío)<br>
+                                • <strong>JDBC URL:</strong> jdbc:h2:mem:testdb
+                            </p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h6>🚀 ¡Listo para usar!</h6>
+                            <p class="text-muted">Usa Postman, curl o cualquier cliente REST para probar los endpoints</p>
+                            <a href="/api-test" class="btn btn-primary">
+                                <i class="bi bi-gear"></i> Probador de API
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

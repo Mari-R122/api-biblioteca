@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title th:text="${esEdicion ? 'Editar Libro' : 'Nuevo Libro'} + ' - Biblioteca'">Nuevo Libro - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>
+                    <i class="bi bi-book" th:if="${!esEdicion}"></i>
+                    <i class="bi bi-pencil-square" th:if="${esEdicion}"></i>
+                    <span th:text="${esEdicion ? 'Editar Libro' : 'Nuevo Libro'}"></span>
+                </h2>
+                <p class="text-muted">
+                    <span th:if="${esEdicion}">Modifica la información del libro</span>
+                    <span th:unless="${esEdicion}">Registra un nuevo libro en la biblioteca</span>
+                </p>
+            </div>
+            <a th:href="@{/libros}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Libros
+            </a>
+        </div>
+
+        <!-- Book Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle"></i> Información del Libro
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/libros/guardar}" th:object="${libro}" method="post">
+                            <!-- Hidden ID field for updates -->
+                            <input type="hidden" th:field="*{id}" th:if="${esEdicion}">
+                            
+                            <div class="row">
+                                <!-- Título -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="titulo" class="form-label">
+                                        <i class="bi bi-bookmark"></i> Título *
+                                    </label>
+                                    <input type="text" class="form-control" id="titulo" th:field="*{titulo}" 
+                                           placeholder="Ingresa el título del libro" required>
+                                    <div class="form-text">Título completo del libro</div>
+                                </div>
+
+                                <!-- Autor -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="autor" class="form-label">
+                                        <i class="bi bi-person"></i> Autor *
+                                    </label>
+                                    <input type="text" class="form-control" id="autor" th:field="*{autor}" 
+                                           placeholder="Nombre del autor" required>
+                                    <div class="form-text">Nombre completo del autor</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- ISBN -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="isbn" class="form-label">
+                                        <i class="bi bi-upc-scan"></i> ISBN *
+                                    </label>
+                                    <input type="text" class="form-control" id="isbn" th:field="*{isbn}" 
+                                           placeholder="978-1234567890" required pattern="[0-9-]{10,17}">
+                                    <div class="form-text">ISBN de 10 o 13 dígitos</div>
+                                </div>
+
+                                <!-- Año de Publicación -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="anioPublicacion" class="form-label">
+                                        <i class="bi bi-calendar"></i> Año de Publicación *
+                                    </label>
+                                    <input type="number" class="form-control" id="anioPublicacion" th:field="*{anioPublicacion}" 
+                                           min="1000" max="2024" placeholder="2023" required>
+                                    <div class="form-text">Año en que fue publicado el libro</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Número de Páginas -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="numeroPaginas" class="form-label">
+                                        <i class="bi bi-file-text"></i> Número de Páginas
+                                    </label>
+                                    <input type="number" class="form-control" id="numeroPaginas" th:field="*{numeroPaginas}" 
+                                           min="1" placeholder="250">
+                                    <div class="form-text">Número total de páginas</div>
+                                </div>
+
+                                <!-- Estado -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="estado" class="form-label">
+                                        <i class="bi bi-gear"></i> Estado *
+                                    </label>
+                                    <select class="form-select" id="estado" th:field="*{estado}" required>
+                                        <option value="">Selecciona un estado</option>
+                                        <option th:each="estado : ${estados}" 
+                                                th:value="${estado}" 
+                                                th:text="${estado}">
+                                        </option>
+                                    </select>
+                                    <div class="form-text">Estado actual del libro</div>
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">
+                                    <i class="bi bi-file-text"></i> Descripción
+                                </label>
+                                <textarea class="form-control" id="descripcion" th:field="*{descripcion}" 
+                                          rows="4" placeholder="Descripción breve del libro..."></textarea>
+                                <div class="form-text">Descripción opcional del contenido del libro</div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/libros}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span th:text="${esEdicion ? 'Actualizar Libro' : 'Guardar Libro'}"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Book Information Card (for editing) -->
+                <div class="card mt-4" th:if="${esEdicion}">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-square"></i> Información Adicional
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Fecha de Ingreso:</strong>
+                                <p th:text="${libro.fechaIngreso != null ? #temporals.format(libro.fechaIngreso, 'dd/MM/yyyy') : 'No disponible'}"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>ID del Libro:</strong>
+                                <p th:text="${libro.id}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <script>
+            // Form validation
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.querySelector('form');
+                const isbnInput = document.getElementById('isbn');
+                const yearInput = document.getElementById('anioPublicacion');
+                const pagesInput = document.getElementById('numeroPaginas');
+
+                // ISBN validation
+                isbnInput.addEventListener('input', function() {
+                    let value = this.value.replace(/[^0-9-]/g, '');
+                    this.value = value;
+                });
+
+                // Year validation
+                yearInput.addEventListener('input', function() {
+                    if (this.value > 2024) {
+                        this.value = 2024;
+                    }
+                    if (this.value < 1000) {
+                        this.value = 1000;
+                    }
+                });
+
+                // Pages validation
+                pagesInput.addEventListener('input', function() {
+                    if (this.value < 1) {
+                        this.value = 1;
+                    }
+                });
+
+                // Form submission validation
+                form.addEventListener('submit', function(e) {
+                    const titulo = document.getElementById('titulo').value.trim();
+                    const autor = document.getElementById('autor').value.trim();
+                    const isbn = document.getElementById('isbn').value.trim();
+                    const year = document.getElementById('anioPublicacion').value;
+                    const estado = document.getElementById('estado').value;
+
+                    if (!titulo || !autor || !isbn || !year || !estado) {
+                        e.preventDefault();
+                        alert('Por favor, completa todos los campos obligatorios.');
+                        return false;
+                    }
+
+                    // Validate ISBN format
+                    const isbnRegex = /^[0-9-]{10,17}$/;
+                    if (!isbnRegex.test(isbn)) {
+                        e.preventDefault();
+                        alert('El ISBN debe tener entre 10 y 17 caracteres (números y guiones).');
+                        return false;
+                    }
+                });
+            });
+
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>

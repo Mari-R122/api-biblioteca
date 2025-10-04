@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title>Usuarios - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-people"></i> Gestión de Usuarios</h2>
+                <p class="text-muted">Administra los usuarios registrados en el sistema</p>
+            </div>
+            <a th:href="@{/usuarios/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Nuevo Usuario
+            </a>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/usuarios}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="busqueda" class="form-label">Buscar</label>
+                        <input type="text" class="form-control" id="busqueda" name="busqueda" 
+                               th:value="${busqueda}" placeholder="Nombre, email...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
+                        <select class="form-select" id="tipoUsuario" name="tipoUsuario">
+                            <option value="">Todos los tipos</option>
+                            <option th:each="tipo : ${tiposUsuario}" 
+                                    th:value="${tipo}" 
+                                    th:text="${tipo}" 
+                                    th:selected="${tipoSeleccionado == tipo}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="">Todos los estados</option>
+                            <option th:each="estado : ${estadosUsuario}" 
+                                    th:value="${estado}" 
+                                    th:text="${estado}" 
+                                    th:selected="${estadoSeleccionado == estado}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-list"></i> Lista de Usuarios
+                    <span class="badge bg-secondary ms-2" th:text="${usuarios.size()}">0</span>
+                </h5>
+                <div>
+                    <a th:href="@{/usuarios/estadisticas}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-graph-up"></i> Estadísticas
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div th:if="${usuarios != null and !usuarios.empty}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                                <th>Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usuario : ${usuarios}">
+                                <td th:text="${usuario.id}"></td>
+                                <td>
+                                    <strong th:text="${usuario.nombre + ' ' + usuario.apellido}"></strong>
+                                    <div th:if="${usuario.direccion != null and !usuario.direccion.empty}" 
+                                         class="text-muted small" 
+                                         th:text="${#strings.abbreviate(usuario.direccion, 30)}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <a th:href="'mailto:' + ${usuario.email}" th:text="${usuario.email}"></a>
+                                </td>
+                                <td th:text="${usuario.telefono}"></td>
+                                <td>
+                                    <span th:switch="${usuario.tipoUsuario}" class="badge">
+                                        <span th:case="'USUARIO'" class="badge bg-primary">Usuario</span>
+                                        <span th:case="'BIBLIOTECARIO'" class="badge bg-success">Bibliotecario</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:switch="${usuario.estado}" class="badge">
+                                        <span th:case="'ACTIVO'" class="badge bg-success">Activo</span>
+                                        <span th:case="'INACTIVO'" class="badge bg-secondary">Inactivo</span>
+                                        <span th:case="'BLOQUEADO'" class="badge bg-danger">Bloqueado</span>
+                                        <span th:case="'SUSPENDIDO'" class="badge bg-warning">Suspendido</span>
+                                    </span>
+                                </td>
+                                <td th:text="${usuario.fechaRegistro != null ? #temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy') : 'N/A'}"></td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/usuarios/editar/' + ${usuario.id}}" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        
+                                        <!-- Estado Dropdown -->
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    data-bs-toggle="dropdown" title="Cambiar Estado">
+                                                <i class="bi bi-gear"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li th:each="estado : ${estadosUsuario}">
+                                                    <form th:action="@{'/usuarios/cambiar-estado/' + ${usuario.id}}" 
+                                                          method="post" style="display: inline;">
+                                                        <input type="hidden" name="estado" th:value="${estado}">
+                                                        <button type="submit" class="dropdown-item" 
+                                                                th:text="${estado}">
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <!-- Promote Button (only for regular users) -->
+                                        <button th:if="${usuario.tipoUsuario.name() == 'USUARIO'}" 
+                                                type="button" class="btn btn-sm btn-outline-success" 
+                                                th:onclick="'promoverUsuario(' + ${usuario.id} + ', \'' + ${usuario.nombre} + ' ' + ${usuario.apellido} + '\')'"
+                                                title="Promover a Bibliotecario">
+                                            <i class="bi bi-arrow-up"></i>
+                                        </button>
+                                        
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                th:onclick="'confirmarEliminacionUsuario(' + ${usuario.id} + ', \'' + ${usuario.nombre} + ' ' + ${usuario.apellido} + '\')'"
+                                                title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Empty State -->
+                <div th:if="${usuarios == null or usuarios.empty}" class="text-center py-5">
+                    <i class="bi bi-people display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">No se encontraron usuarios</h4>
+                    <p class="text-muted">
+                        <span th:if="${busqueda != null and !busqueda.empty}">
+                            No hay usuarios que coincidan con tu búsqueda.
+                        </span>
+                        <span th:unless="${busqueda != null and !busqueda.empty}">
+                            Aún no hay usuarios registrados en el sistema.
+                        </span>
+                    </p>
+                    <a th:href="@{/usuarios/nuevo}" class="btn btn-primary">
+                        <i class="bi bi-plus"></i> Agregar Primer Usuario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <script>
+            function confirmarEliminacionUsuario(id, nombre) {
+                if (confirm('¿Estás seguro de que deseas eliminar al usuario "' + nombre + '"?\n\nEsta acción no se puede deshacer.')) {
+                    // Crear formulario dinámicamente
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/usuarios/eliminar/' + id;
+                    
+                    // Agregar token CSRF si es necesario
+                    const csrfToken = document.querySelector('meta[name="_csrf"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken.content;
+                        form.appendChild(csrfInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            function promoverUsuario(id, nombre) {
+                if (confirm('¿Estás seguro de que deseas promover a "' + nombre + '" a bibliotecario?\n\nTendrá acceso a funciones administrativas.')) {
+                    // Crear formulario dinámicamente
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/usuarios/promover/' + id;
+                    
+                    // Agregar token CSRF si es necesario
+                    const csrfToken = document.querySelector('meta[name="_csrf"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken.content;
+                        form.appendChild(csrfInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>

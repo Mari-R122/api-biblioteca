@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title th:text="${esEdicion ? 'Editar Usuario' : 'Nuevo Usuario'} + ' - Biblioteca'">Nuevo Usuario - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>
+                    <i class="bi bi-person-plus" th:if="${!esEdicion}"></i>
+                    <i class="bi bi-pencil-square" th:if="${esEdicion}"></i>
+                    <span th:text="${esEdicion ? 'Editar Usuario' : 'Nuevo Usuario'}"></span>
+                </h2>
+                <p class="text-muted">
+                    <span th:if="${esEdicion}">Modifica la información del usuario</span>
+                    <span th:unless="${esEdicion}">Registra un nuevo usuario en el sistema</span>
+                </p>
+            </div>
+            <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Usuarios
+            </a>
+        </div>
+
+        <!-- User Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-lines-fill"></i> Información Personal
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+                            <!-- Hidden ID field for updates -->
+                            <input type="hidden" th:field="*{id}" th:if="${esEdicion}">
+                            
+                            <div class="row">
+                                <!-- Nombre -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">
+                                        <i class="bi bi-person"></i> Nombre *
+                                    </label>
+                                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" 
+                                           placeholder="Ingresa el nombre" required>
+                                    <div class="form-text">Nombre del usuario</div>
+                                </div>
+
+                                <!-- Apellido -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido" class="form-label">
+                                        <i class="bi bi-person"></i> Apellido *
+                                    </label>
+                                    <input type="text" class="form-control" id="apellido" th:field="*{apellido}" 
+                                           placeholder="Ingresa el apellido" required>
+                                    <div class="form-text">Apellido del usuario</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Email -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="bi bi-envelope"></i> Email *
+                                    </label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                           placeholder="usuario@ejemplo.com" required>
+                                    <div class="form-text">Dirección de correo electrónico</div>
+                                </div>
+
+                                <!-- Teléfono -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">
+                                        <i class="bi bi-telephone"></i> Teléfono
+                                    </label>
+                                    <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" 
+                                           placeholder="123456789">
+                                    <div class="form-text">Número de teléfono (opcional)</div>
+                                </div>
+                            </div>
+
+                            <!-- Dirección -->
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label">
+                                    <i class="bi bi-geo-alt"></i> Dirección
+                                </label>
+                                <textarea class="form-control" id="direccion" th:field="*{direccion}" 
+                                          rows="2" placeholder="Dirección completa..."></textarea>
+                                <div class="form-text">Dirección del usuario (opcional)</div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Fecha de Nacimiento -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="fechaNacimiento" class="form-label">
+                                        <i class="bi bi-calendar"></i> Fecha de Nacimiento *
+                                    </label>
+                                    <input type="date" class="form-control" id="fechaNacimiento" th:field="*{fechaNacimiento}" 
+                                           required>
+                                    <div class="form-text">Fecha de nacimiento del usuario</div>
+                                </div>
+
+                                <!-- Tipo de Usuario -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="tipoUsuario" class="form-label">
+                                        <i class="bi bi-person-badge"></i> Tipo de Usuario *
+                                    </label>
+                                    <select class="form-select" id="tipoUsuario" th:field="*{tipoUsuario}" required>
+                                        <option value="">Selecciona un tipo</option>
+                                        <option th:each="tipo : ${tiposUsuario}" 
+                                                th:value="${tipo}" 
+                                                th:text="${tipo}">
+                                        </option>
+                                    </select>
+                                    <div class="form-text">Rol del usuario en el sistema</div>
+                                </div>
+                            </div>
+
+                            <!-- Estado -->
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">
+                                    <i class="bi bi-gear"></i> Estado *
+                                </label>
+                                <select class="form-select" id="estado" th:field="*{estado}" required>
+                                    <option value="">Selecciona un estado</option>
+                                    <option th:each="estado : ${estadosUsuario}" 
+                                            th:value="${estado}" 
+                                            th:text="${estado}">
+                                    </option>
+                                </select>
+                                <div class="form-text">Estado actual del usuario</div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span th:text="${esEdicion ? 'Actualizar Usuario' : 'Guardar Usuario'}"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- User Information Card (for editing) -->
+                <div class="card mt-4" th:if="${esEdicion}">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-square"></i> Información Adicional
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Fecha de Registro:</strong>
+                                <p th:text="${usuario.fechaRegistro != null ? #temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy HH:mm') : 'No disponible'}"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>ID del Usuario:</strong>
+                                <p th:text="${usuario.id}"></p>
+                            </div>
+                        </div>
+                        <div class="row" th:if="${usuario.ultimoAcceso != null}">
+                            <div class="col-md-12">
+                                <strong>Último Acceso:</strong>
+                                <p th:text="${#temporals.format(usuario.ultimoAcceso, 'dd/MM/yyyy HH:mm')}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Information -->
+                <div class="card mt-4" th:unless="${esEdicion}">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-lock"></i> Información de Acceso
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Contraseña por defecto:</strong> El nuevo usuario recibirá la contraseña "123456".
+                            Se recomienda que cambie su contraseña en el primer acceso.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <script>
+            // Form validation
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.querySelector('form');
+                const emailInput = document.getElementById('email');
+                const phoneInput = document.getElementById('telefono');
+                const birthDateInput = document.getElementById('fechaNacimiento');
+
+                // Email validation
+                emailInput.addEventListener('blur', function() {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (this.value && !emailRegex.test(this.value)) {
+                        this.setCustomValidity('Por favor, ingresa un email válido');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+
+                // Phone validation
+                phoneInput.addEventListener('input', function() {
+                    let value = this.value.replace(/[^0-9+\-\s]/g, '');
+                    this.value = value;
+                });
+
+                // Birth date validation
+                birthDateInput.addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const today = new Date();
+                    const minAge = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+                    
+                    if (selectedDate > today) {
+                        this.setCustomValidity('La fecha de nacimiento no puede ser futura');
+                    } else if (selectedDate < minAge) {
+                        this.setCustomValidity('La edad no puede ser mayor a 100 años');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+
+                // Form submission validation
+                form.addEventListener('submit', function(e) {
+                    const nombre = document.getElementById('nombre').value.trim();
+                    const apellido = document.getElementById('apellido').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const birthDate = document.getElementById('fechaNacimiento').value;
+                    const tipoUsuario = document.getElementById('tipoUsuario').value;
+                    const estado = document.getElementById('estado').value;
+
+                    if (!nombre || !apellido || !email || !birthDate || !tipoUsuario || !estado) {
+                        e.preventDefault();
+                        alert('Por favor, completa todos los campos obligatorios.');
+                        return false;
+                    }
+
+                    // Validate email format
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        e.preventDefault();
+                        alert('Por favor, ingresa un email válido.');
+                        return false;
+                    }
+                });
+            });
+
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>

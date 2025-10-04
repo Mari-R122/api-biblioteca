@@ -1,0 +1,304 @@
+{
+  "usuarios": {
+    "usuario_regular": {
+      "nombre": "Juan Carlos",
+      "apellido": "Pérez García",
+      "email": "juan.perez@email.com",
+      "telefono": "987654321",
+      "direccion": "Avenida Central 456, Apt 2B",
+      "fechaNacimiento": "1990-08-22"
+    },
+    "bibliotecario": {
+      "nombre": "María Elena",
+      "apellido": "González Martínez",
+      "email": "maria.gonzalez@biblioteca.com",
+      "telefono": "123456789",
+      "direccion": "Calle Principal 123",
+      "fechaNacimiento": "1985-03-15"
+    },
+    "usuario_nuevo": {
+      "nombre": "Carlos Alberto",
+      "apellido": "Rodriguez Silva",
+      "email": "carlos.rodriguez@email.com",
+      "telefono": "555666777",
+      "direccion": "Plaza Mayor 789",
+      "fechaNacimiento": "1995-06-15"
+    }
+  },
+  "libros": {
+    "libro_nuevo_1": {
+      "titulo": "El Principito",
+      "autor": "Antoine de Saint-Exupéry",
+      "descripcion": "Una obra maestra de la literatura francesa que narra las aventuras de un pequeño príncipe que viaja de planeta en planeta.",
+      "anioPublicacion": 1943,
+      "isbn": "9782070413558",
+      "numeroPaginas": 96,
+      "estado": "DISPONIBLE"
+    },
+    "libro_nuevo_2": {
+      "titulo": "Cien años de soledad",
+      "autor": "Gabriel García Márquez",
+      "descripcion": "La obra maestra del realismo mágico que narra la historia de la familia Buendía a lo largo de siete generaciones.",
+      "anioPublicacion": 1967,
+      "isbn": "9788497592208",
+      "numeroPaginas": 471,
+      "estado": "DISPONIBLE"
+    },
+    "libro_nuevo_3": {
+      "titulo": "1984",
+      "autor": "George Orwell",
+      "descripcion": "Una novela distópica que describe un futuro totalitario donde el Gran Hermano vigila cada movimiento de los ciudadanos.",
+      "anioPublicacion": 1949,
+      "isbn": "9780451524935",
+      "numeroPaginas": 328,
+      "estado": "DISPONIBLE"
+    },
+    "libro_actualizacion": {
+      "titulo": "El Quijote - Edición Conmemorativa",
+      "autor": "Miguel de Cervantes Saavedra",
+      "descripcion": "La obra cumbre de la literatura española en una edición especial con notas y comentarios.",
+      "anioPublicacion": 1605,
+      "isbn": "9788467034100",
+      "numeroPaginas": 863,
+      "estado": "DISPONIBLE"
+    }
+  },
+  "prestamos": {
+    "prestamo_nuevo": {
+      "usuarioId": 1,
+      "libroId": 1
+    },
+    "devolucion": {
+      "observaciones": "Libro devuelto en excelente estado. Sin daños ni marcas."
+    }
+  },
+  "busquedas": {
+    "por_titulo": {
+      "queries": [
+        "quijote",
+        "principito",
+        "soledad",
+        "1984"
+      ]
+    },
+    "por_autor": {
+      "queries": [
+        "cervantes",
+        "garcía márquez",
+        "orwell",
+        "saint-exupéry"
+      ]
+    },
+    "por_isbn": {
+      "queries": [
+        "9788467034100",
+        "9782070413558",
+        "9788497592208",
+        "9780451524935"
+      ]
+    }
+  },
+  "filtros": {
+    "estados_libro": [
+      "DISPONIBLE",
+      "PRESTADO",
+      "EN_REPARACION",
+      "PERDIDO",
+      "RETIRADO"
+    ],
+    "tipos_usuario": [
+      "USUARIO",
+      "BIBLIOTECARIO"
+    ],
+    "estados_usuario": [
+      "ACTIVO",
+      "INACTIVO",
+      "BLOQUEADO",
+      "SUSPENDIDO"
+    ],
+    "estados_prestamo": [
+      "ACTIVO",
+      "DEVUELTO",
+      "VENCIDO",
+      "RENOVADO",
+      "CANCELADO",
+      "PERDIDO"
+    ]
+  },
+  "credenciales": {
+    "usuario_regular": {
+      "email": "juan.perez@email.com",
+      "password": "123456"
+    },
+    "bibliotecario": {
+      "email": "maria.gonzalez@biblioteca.com",
+      "password": "admin123"
+    },
+    "usuario_adicional": {
+      "email": "ana.martinez@email.com",
+      "password": "123456"
+    }
+  },
+  "urls_ejemplo": {
+    "base": "http://localhost:8080",
+    "h2_console": "http://localhost:8080/h2-console",
+    "endpoints": {
+      "auth": {
+        "login": "/api/auth/login",
+        "register": "/api/auth/register",
+        "validate": "/api/auth/validate"
+      },
+      "libros": {
+        "all": "/api/libros",
+        "by_id": "/api/libros/1",
+        "search_title": "/api/libros/buscar/titulo?q=quijote",
+        "search_author": "/api/libros/buscar/autor?autor=cervantes",
+        "search_isbn": "/api/libros/buscar/isbn/9788467034100",
+        "by_state": "/api/libros/estado/DISPONIBLE",
+        "available": "/api/libros/disponibles",
+        "loaned": "/api/libros/prestados",
+        "multi_search": "/api/libros/buscar?titulo=quijote&autor=cervantes&estado=DISPONIBLE",
+        "change_state": "/api/libros/1/estado",
+        "statistics": "/api/libros/estadisticas"
+      },
+      "usuarios": {
+        "all": "/api/usuarios",
+        "by_id": "/api/usuarios/1",
+        "search": "/api/usuarios/buscar?nombre=juan&tipoUsuario=USUARIO&estado=ACTIVO",
+        "by_type": "/api/usuarios/tipo/USUARIO",
+        "active": "/api/usuarios/activos",
+        "librarians": "/api/usuarios/bibliotecarios/activos",
+        "change_state": "/api/usuarios/1/estado",
+        "promote": "/api/usuarios/1/promover",
+        "statistics": "/api/usuarios/estadisticas"
+      },
+      "prestamos": {
+        "all": "/api/prestamos",
+        "by_id": "/api/prestamos/1",
+        "create": "/api/prestamos",
+        "return": "/api/prestamos/1/devolver",
+        "renew": "/api/prestamos/1/renovar",
+        "by_user": "/api/prestamos/usuario/1",
+        "by_book": "/api/prestamos/libro/1",
+        "by_state": "/api/prestamos/estado/ACTIVO",
+        "active": "/api/prestamos/activos",
+        "overdue": "/api/prestamos/vencidos",
+        "statistics": "/api/prestamos/estadisticas"
+      }
+    }
+  },
+  "headers": {
+    "content_type_json": {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    "authorization_bearer": {
+      "key": "Authorization",
+      "value": "Bearer {{auth_token}}"
+    }
+  },
+  "respuestas_ejemplo": {
+    "login_exitoso": {
+      "token": "Bearer_1",
+      "email": "juan.perez@email.com",
+      "nombre": "Juan",
+      "apellido": "Pérez",
+      "tipoUsuario": "USUARIO"
+    },
+    "libro_creado": {
+      "id": 6,
+      "titulo": "El Principito",
+      "autor": "Antoine de Saint-Exupéry",
+      "descripcion": "Una obra maestra de la literatura francesa",
+      "anioPublicacion": 1943,
+      "isbn": "9782070413558",
+      "numeroPaginas": 96,
+      "fechaIngreso": "2025-10-01",
+      "estado": "DISPONIBLE"
+    },
+    "prestamo_creado": {
+      "id": 3,
+      "usuario": {
+        "id": 1,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "email": "juan.perez@email.com"
+      },
+      "libro": {
+        "id": 1,
+        "titulo": "El Quijote",
+        "autor": "Miguel de Cervantes",
+        "isbn": "9788467034100"
+      },
+      "fechaPrestamo": "2025-10-01",
+      "fechaDevolucionEsperada": "2025-10-16",
+      "estado": "ACTIVO"
+    },
+    "estadisticas_libros": {
+      "totalDisponibles": 3,
+      "totalPrestados": 1,
+      "totalEnReparacion": 0,
+      "totalPerdidos": 0,
+      "totalRetirados": 1,
+      "total": 5
+    },
+    "estadisticas_prestamos": {
+      "totalActivos": 2,
+      "totalDevueltos": 5,
+      "totalVencidos": 1,
+      "totalRenovados": 0,
+      "total": 8
+    }
+  },
+  "errores_comunes": {
+    "400_bad_request": {
+      "mensaje": "Datos de entrada inválidos"
+    },
+    "401_unauthorized": {
+      "mensaje": "Token de autorización requerido"
+    },
+    "403_forbidden": {
+      "mensaje": "No tienes permisos para realizar esta acción"
+    },
+    "404_not_found": {
+      "mensaje": "Recurso no encontrado"
+    },
+    "500_internal_error": {
+      "mensaje": "Error interno del servidor"
+    }
+  },
+  "flujos_prueba": {
+    "flujo_usuario_completo": [
+      "1. Login como usuario",
+      "2. Obtener token de autenticación",
+      "3. Buscar libros disponibles",
+      "4. Ver préstamos del usuario",
+      "5. Validar token"
+    ],
+    "flujo_bibliotecario_completo": [
+      "1. Login como bibliotecario",
+      "2. Obtener token de autenticación",
+      "3. Ver todos los usuarios",
+      "4. Crear nuevo libro",
+      "5. Crear préstamo",
+      "6. Ver estadísticas",
+      "7. Devolver libro"
+    ],
+    "flujo_gestion_libros": [
+      "1. Obtener todos los libros",
+      "2. Buscar por título/autor",
+      "3. Crear nuevo libro",
+      "4. Actualizar libro existente",
+      "5. Cambiar estado del libro",
+      "6. Ver estadísticas de libros"
+    ],
+    "flujo_gestion_prestamos": [
+      "1. Ver préstamos activos",
+      "2. Crear nuevo préstamo",
+      "3. Renovar préstamo",
+      "4. Devolver libro",
+      "5. Ver préstamos vencidos",
+      "6. Ver estadísticas de préstamos"
+    ]
+  }
+}

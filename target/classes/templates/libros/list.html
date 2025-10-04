@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title>Libros - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-book"></i> Gestión de Libros</h2>
+                <p class="text-muted">Administra el catálogo de libros de la biblioteca</p>
+            </div>
+            <a th:href="@{/libros/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Nuevo Libro
+            </a>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/libros}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="busqueda" class="form-label">Buscar</label>
+                        <input type="text" class="form-control" id="busqueda" name="busqueda" 
+                               th:value="${busqueda}" placeholder="Título, autor o ISBN...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="tipo" class="form-label">Tipo de búsqueda</label>
+                        <select class="form-select" id="tipo" name="tipo">
+                            <option value="titulo" th:selected="${tipo == 'titulo'}">Por título</option>
+                            <option value="autor" th:selected="${tipo == 'autor'}">Por autor</option>
+                            <option value="isbn" th:selected="${tipo == 'isbn'}">Por ISBN</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="">Todos los estados</option>
+                            <option th:each="estado : ${estados}" 
+                                    th:value="${estado}" 
+                                    th:text="${estado}" 
+                                    th:selected="${estadoSeleccionado == estado}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Books Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-list"></i> Lista de Libros
+                    <span class="badge bg-secondary ms-2" th:text="${libros.size()}">0</span>
+                </h5>
+                <div>
+                    <a th:href="@{/libros/estadisticas}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-graph-up"></i> Estadísticas
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div th:if="${libros != null and !libros.empty}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Año</th>
+                                <th>ISBN</th>
+                                <th>Estado</th>
+                                <th>Ingreso</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="libro : ${libros}">
+                                <td th:text="${libro.id}"></td>
+                                <td>
+                                    <strong th:text="${libro.titulo}"></strong>
+                                    <div th:if="${libro.descripcion != null and !libro.descripcion.empty}" 
+                                         class="text-muted small" 
+                                         th:text="${#strings.abbreviate(libro.descripcion, 50)}">
+                                    </div>
+                                </td>
+                                <td th:text="${libro.autor}"></td>
+                                <td th:text="${libro.anioPublicacion}"></td>
+                                <td>
+                                    <code th:text="${libro.isbn}"></code>
+                                </td>
+                                <td>
+                                    <span th:switch="${libro.estado}" class="badge">
+                                        <span th:case="'DISPONIBLE'" class="badge bg-success">Disponible</span>
+                                        <span th:case="'PRESTADO'" class="badge bg-warning">Prestado</span>
+                                        <span th:case="'EN_REPARACION'" class="badge bg-info">En Reparación</span>
+                                        <span th:case="'PERDIDO'" class="badge bg-danger">Perdido</span>
+                                        <span th:case="'RETIRADO'" class="badge bg-secondary">Retirado</span>
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(libro.fechaIngreso, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/libros/editar/' + ${libro.id}}" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        
+                                        <!-- Estado Dropdown -->
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    data-bs-toggle="dropdown" title="Cambiar Estado">
+                                                <i class="bi bi-gear"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li th:each="estado : ${estados}">
+                                                    <form th:action="@{'/libros/cambiar-estado/' + ${libro.id}}" 
+                                                          method="post" style="display: inline;">
+                                                        <input type="hidden" name="estado" th:value="${estado}">
+                                                        <button type="submit" class="dropdown-item" 
+                                                                th:text="${estado}">
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                th:onclick="'confirmarEliminacion(' + ${libro.id} + ', \'' + ${libro.titulo} + '\')'"
+                                                title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Empty State -->
+                <div th:if="${libros == null or libros.empty}" class="text-center py-5">
+                    <i class="bi bi-book display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">No se encontraron libros</h4>
+                    <p class="text-muted">
+                        <span th:if="${busqueda != null and !busqueda.empty}">
+                            No hay libros que coincidan con tu búsqueda.
+                        </span>
+                        <span th:unless="${busqueda != null and !busqueda.empty}">
+                            Aún no hay libros registrados en la biblioteca.
+                        </span>
+                    </p>
+                    <a th:href="@{/libros/nuevo}" class="btn btn-primary">
+                        <i class="bi bi-plus"></i> Agregar Primer Libro
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <script>
+            function confirmarEliminacion(id, titulo) {
+                if (confirm('¿Estás seguro de que deseas eliminar el libro "' + titulo + '"?\n\nEsta acción no se puede deshacer.')) {
+                    // Crear formulario dinámicamente
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/libros/eliminar/' + id;
+                    
+                    // Agregar token CSRF si es necesario
+                    const csrfToken = document.querySelector('meta[name="_csrf"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken.content;
+                        form.appendChild(csrfInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>

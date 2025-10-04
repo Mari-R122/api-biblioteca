@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title>Estadísticas - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-graph-up"></i> Estadísticas de la Biblioteca</h2>
+                <p class="text-muted">Resumen general del estado de la biblioteca</p>
+            </div>
+            <button class="btn btn-outline-primary" onclick="window.print()">
+                <i class="bi bi-printer"></i> Imprimir Reporte
+            </button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${estadisticasLibros.total}">0</h4>
+                                <p class="card-text">Total de Libros</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-book display-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${totalUsuarios}">0</h4>
+                                <p class="card-text">Usuarios Registrados</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-people display-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${totalBibliotecarios}">0</h4>
+                                <p class="card-text">Bibliotecarios</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-person-badge display-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title" th:text="${estadisticasPrestamos.total}">0</h4>
+                                <p class="card-text">Total Préstamos</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-journal-bookmark display-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <!-- Libros por Estado -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-pie-chart"></i> Libros por Estado
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="librosChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Préstamos por Estado -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-bar-chart"></i> Préstamos por Estado
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="prestamosChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Statistics -->
+        <div class="row">
+            <!-- Libros Statistics -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-book"></i> Estadísticas de Libros
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td><i class="bi bi-check-circle text-success"></i> Disponibles</td>
+                                        <td><span class="badge bg-success" th:text="${estadisticasLibros.totalDisponibles}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasLibros.total > 0 ? (estadisticasLibros.totalDisponibles * 100 / estadisticasLibros.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-journal-bookmark text-warning"></i> Prestados</td>
+                                        <td><span class="badge bg-warning" th:text="${estadisticasLibros.totalPrestados}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-warning" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasLibros.total > 0 ? (estadisticasLibros.totalPrestados * 100 / estadisticasLibros.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-tools text-info"></i> En Reparación</td>
+                                        <td><span class="badge bg-info" th:text="${estadisticasLibros.totalEnReparacion}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-info" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasLibros.total > 0 ? (estadisticasLibros.totalEnReparacion * 100 / estadisticasLibros.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-exclamation-triangle text-danger"></i> Perdidos</td>
+                                        <td><span class="badge bg-danger" th:text="${estadisticasLibros.totalPerdidos}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-danger" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasLibros.total > 0 ? (estadisticasLibros.totalPerdidos * 100 / estadisticasLibros.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-archive text-secondary"></i> Retirados</td>
+                                        <td><span class="badge bg-secondary" th:text="${estadisticasLibros.totalRetirados}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-secondary" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasLibros.total > 0 ? (estadisticasLibros.totalRetirados * 100 / estadisticasLibros.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Préstamos Statistics -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-journal-bookmark"></i> Estadísticas de Préstamos
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td><i class="bi bi-play-circle text-success"></i> Activos</td>
+                                        <td><span class="badge bg-success" th:text="${estadisticasPrestamos.totalActivos}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasPrestamos.total > 0 ? (estadisticasPrestamos.totalActivos * 100 / estadisticasPrestamos.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-check-circle text-info"></i> Devueltos</td>
+                                        <td><span class="badge bg-info" th:text="${estadisticasPrestamos.totalDevueltos}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-info" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasPrestamos.total > 0 ? (estadisticasPrestamos.totalDevueltos * 100 / estadisticasPrestamos.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-exclamation-triangle text-danger"></i> Vencidos</td>
+                                        <td><span class="badge bg-danger" th:text="${estadisticasPrestamos.totalVencidos}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-danger" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasPrestamos.total > 0 ? (estadisticasPrestamos.totalVencidos * 100 / estadisticasPrestamos.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-arrow-repeat text-warning"></i> Renovados</td>
+                                        <td><span class="badge bg-warning" th:text="${estadisticasPrestamos.totalRenovados}">0</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-warning" role="progressbar" 
+                                                     th:style="'width: ' + ${estadisticasPrestamos.total > 0 ? (estadisticasPrestamos.totalRenovados * 100 / estadisticasPrestamos.total) : 0} + '%'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Statistics -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-people"></i> Estadísticas de Usuarios
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <h3 class="text-primary" th:text="${totalUsuarios}">0</h3>
+                                <p class="text-muted">Usuarios Regulares</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h3 class="text-success" th:text="${totalBibliotecarios}">0</h3>
+                                <p class="text-muted">Bibliotecarios</p>
+                            </div>
+                        </div>
+                        <div class="row text-center mt-3">
+                            <div class="col-md-12">
+                                <h3 class="text-info" th:text="${usuariosActivos}">0</h3>
+                                <p class="text-muted">Usuarios Activos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightning"></i> Acciones Rápidas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/libros}" class="btn btn-outline-primary">
+                                <i class="bi bi-book"></i> Gestionar Libros
+                            </a>
+                            <a th:href="@{/usuarios}" class="btn btn-outline-success">
+                                <i class="bi bi-people"></i> Gestionar Usuarios
+                            </a>
+                            <a th:href="@{/prestamos}" class="btn btn-outline-info">
+                                <i class="bi bi-journal-bookmark"></i> Gestionar Préstamos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Libros Chart
+                const librosCtx = document.getElementById('librosChart').getContext('2d');
+                const librosChart = new Chart(librosCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Disponibles', 'Prestados', 'En Reparación', 'Perdidos', 'Retirados'],
+                        datasets: [{
+                            data: [
+                                <span th:text="${estadisticasLibros.totalDisponibles}"></span>,
+                                <span th:text="${estadisticasLibros.totalPrestados}"></span>,
+                                <span th:text="${estadisticasLibros.totalEnReparacion}"></span>,
+                                <span th:text="${estadisticasLibros.totalPerdidos}"></span>,
+                                <span th:text="${estadisticasLibros.totalRetirados}"></span>
+                            ],
+                            backgroundColor: [
+                                '#28a745',
+                                '#ffc107',
+                                '#17a2b8',
+                                '#dc3545',
+                                '#6c757d'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+
+                // Préstamos Chart
+                const prestamosCtx = document.getElementById('prestamosChart').getContext('2d');
+                const prestamosChart = new Chart(prestamosCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Activos', 'Devueltos', 'Vencidos', 'Renovados'],
+                        datasets: [{
+                            label: 'Cantidad',
+                            data: [
+                                <span th:text="${estadisticasPrestamos.totalActivos}"></span>,
+                                <span th:text="${estadisticasPrestamos.totalDevueltos}"></span>,
+                                <span th:text="${estadisticasPrestamos.totalVencidos}"></span>,
+                                <span th:text="${estadisticasPrestamos.totalRenovados}"></span>
+                            ],
+                            backgroundColor: [
+                                '#28a745',
+                                '#17a2b8',
+                                '#dc3545',
+                                '#ffc107'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+        
+        <style>
+            @media print {
+                .btn, .navbar, .card-header .btn {
+                    display: none !important;
+                }
+                .card {
+                    break-inside: avoid;
+                }
+            }
+        </style>
+    </div>
+</body>
+</html>

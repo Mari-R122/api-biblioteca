@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title>Nuevo Préstamo - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-journal-plus"></i> Nuevo Préstamo</h2>
+                <p class="text-muted">Registra un nuevo préstamo de libro</p>
+            </div>
+            <a th:href="@{/prestamos}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Préstamos
+            </a>
+        </div>
+
+        <!-- Loan Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-journal-bookmark"></i> Información del Préstamo
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/prestamos/crear}" method="post">
+                            <div class="row">
+                                <!-- Usuario -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="usuarioId" class="form-label">
+                                        <i class="bi bi-person"></i> Usuario *
+                                    </label>
+                                    <select class="form-select" id="usuarioId" name="usuarioId" required>
+                                        <option value="">Selecciona un usuario</option>
+                                        <option th:each="usuario : ${usuarios}" 
+                                                th:value="${usuario.id}" 
+                                                th:text="${usuario.nombre + ' ' + usuario.apellido + ' (' + usuario.email + ')'}">
+                                        </option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i> Solo se muestran usuarios activos
+                                    </div>
+                                </div>
+
+                                <!-- Libro -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="libroId" class="form-label">
+                                        <i class="bi bi-book"></i> Libro *
+                                    </label>
+                                    <select class="form-select" id="libroId" name="libroId" required>
+                                        <option value="">Selecciona un libro</option>
+                                        <option th:each="libro : ${librosDisponibles}" 
+                                                th:value="${libro.id}" 
+                                                th:text="${libro.titulo + ' - ' + libro.autor}">
+                                        </option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i> Solo se muestran libros disponibles
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Loan Information -->
+                            <div class="alert alert-info">
+                                <h6><i class="bi bi-info-circle"></i> Información del Préstamo</h6>
+                                <ul class="mb-0">
+                                    <li><strong>Fecha de préstamo:</strong> <span id="fechaPrestamo"></span></li>
+                                    <li><strong>Fecha de devolución esperada:</strong> <span id="fechaDevolucion"></span></li>
+                                    <li><strong>Duración:</strong> 15 días</li>
+                                </ul>
+                            </div>
+
+                            <!-- User and Book Details (when selected) -->
+                            <div id="usuarioInfo" class="card mb-3" style="display: none;">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="bi bi-person-circle"></i> Información del Usuario</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>Nombre:</strong> <span id="usuarioNombre"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Email:</strong> <span id="usuarioEmail"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <strong>Teléfono:</strong> <span id="usuarioTelefono"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Tipo:</strong> <span id="usuarioTipo"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="libroInfo" class="card mb-3" style="display: none;">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="bi bi-book"></i> Información del Libro</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>Título:</strong> <span id="libroTitulo"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Autor:</strong> <span id="libroAutor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <strong>ISBN:</strong> <span id="libroIsbn"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Año:</strong> <span id="libroAnio"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2" th:if="${librosDisponibles}">
+                                        <div class="col-md-12">
+                                            <strong>Descripción:</strong> <span id="libroDescripcion"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/prestamos}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="btnCrear" disabled>
+                                    <i class="bi bi-check-circle"></i> Crear Préstamo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Loan Rules -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> Reglas de Préstamo
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Límites de Préstamo</h6>
+                                <ul>
+                                    <li>Máximo 3 préstamos activos por usuario</li>
+                                    <li>Duración: 15 días por préstamo</li>
+                                    <li>Posibilidad de renovación (1 vez)</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Restricciones</h6>
+                                <ul>
+                                    <li>Solo usuarios activos pueden recibir préstamos</li>
+                                    <li>Solo libros disponibles pueden ser prestados</li>
+                                    <li>Multas por devolución tardía</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const usuarioSelect = document.getElementById('usuarioId');
+                const libroSelect = document.getElementById('libroId');
+                const btnCrear = document.getElementById('btnCrear');
+                
+                // Data arrays
+                const usuarios = [
+                    <span th:each="usuario, iterStat : ${usuarios}">
+                    {
+                        id: <span th:text="${usuario.id}"></span>,
+                        nombre: '<span th:text="${usuario.nombre}"></span>',
+                        apellido: '<span th:text="${usuario.apellido}"></span>',
+                        email: '<span th:text="${usuario.email}"></span>',
+                        telefono: '<span th:text="${usuario.telefono != null ? usuario.telefono : 'N/A'}"></span>',
+                        tipo: '<span th:text="${usuario.tipoUsuario}"></span>'
+                    }<span th:if="${!iterStat.last}">,</span>
+                    </span>
+                ];
+                
+                const libros = [
+                    <span th:each="libro, iterStat : ${librosDisponibles}">
+                    {
+                        id: <span th:text="${libro.id}"></span>,
+                        titulo: '<span th:text="${libro.titulo}"></span>',
+                        autor: '<span th:text="${libro.autor}"></span>',
+                        isbn: '<span th:text="${libro.isbn}"></span>',
+                        anio: <span th:text="${libro.anioPublicacion}"></span>,
+                        descripcion: '<span th:text="${libro.descripcion != null ? libro.descripcion : 'Sin descripción'}"></span>'
+                    }<span th:if="${!iterStat.last}">,</span>
+                    </span>
+                ];
+                
+                // Set current date
+                const today = new Date();
+                const returnDate = new Date(today.getTime() + (15 * 24 * 60 * 60 * 1000));
+                
+                document.getElementById('fechaPrestamo').textContent = formatDate(today);
+                document.getElementById('fechaDevolucion').textContent = formatDate(returnDate);
+                
+                // Usuario selection handler
+                usuarioSelect.addEventListener('change', function() {
+                    const usuarioId = this.value;
+                    const usuario = usuarios.find(u => u.id == usuarioId);
+                    
+                    if (usuario) {
+                        document.getElementById('usuarioNombre').textContent = usuario.nombre + ' ' + usuario.apellido;
+                        document.getElementById('usuarioEmail').textContent = usuario.email;
+                        document.getElementById('usuarioTelefono').textContent = usuario.telefono;
+                        document.getElementById('usuarioTipo').textContent = usuario.tipo;
+                        document.getElementById('usuarioInfo').style.display = 'block';
+                    } else {
+                        document.getElementById('usuarioInfo').style.display = 'none';
+                    }
+                    
+                    updateCreateButton();
+                });
+                
+                // Libro selection handler
+                libroSelect.addEventListener('change', function() {
+                    const libroId = this.value;
+                    const libro = libros.find(l => l.id == libroId);
+                    
+                    if (libro) {
+                        document.getElementById('libroTitulo').textContent = libro.titulo;
+                        document.getElementById('libroAutor').textContent = libro.autor;
+                        document.getElementById('libroIsbn').textContent = libro.isbn;
+                        document.getElementById('libroAnio').textContent = libro.anio;
+                        document.getElementById('libroDescripcion').textContent = libro.descripcion;
+                        document.getElementById('libroInfo').style.display = 'block';
+                    } else {
+                        document.getElementById('libroInfo').style.display = 'none';
+                    }
+                    
+                    updateCreateButton();
+                });
+                
+                function updateCreateButton() {
+                    const usuarioSeleccionado = usuarioSelect.value;
+                    const libroSeleccionado = libroSelect.value;
+                    
+                    if (usuarioSeleccionado && libroSeleccionado) {
+                        btnCrear.disabled = false;
+                    } else {
+                        btnCrear.disabled = true;
+                    }
+                }
+                
+                function formatDate(date) {
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+                
+                // Form validation
+                document.querySelector('form').addEventListener('submit', function(e) {
+                    const usuarioId = document.getElementById('usuarioId').value;
+                    const libroId = document.getElementById('libroId').value;
+                    
+                    if (!usuarioId || !libroId) {
+                        e.preventDefault();
+                        alert('Por favor, selecciona tanto un usuario como un libro.');
+                        return false;
+                    }
+                });
+            });
+            
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>

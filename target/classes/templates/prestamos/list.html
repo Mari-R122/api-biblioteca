@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ~{::scripts})}">
+<head>
+    <title>Préstamos - Biblioteca</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-journal-bookmark"></i> Gestión de Préstamos</h2>
+                <p class="text-muted">Administra los préstamos de libros de la biblioteca</p>
+            </div>
+            <a th:href="@{/prestamos/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Nuevo Préstamo
+            </a>
+        </div>
+
+        <!-- Filter -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/prestamos}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="estado" class="form-label">Estado del Préstamo</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="">Todos los estados</option>
+                            <option th:each="estado : ${estadosPrestamo}" 
+                                    th:value="${estado}" 
+                                    th:text="${estado}" 
+                                    th:selected="${estadoSeleccionado == estado}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-funnel"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <a th:href="@{/prestamos}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loans Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-list"></i> Lista de Préstamos
+                    <span class="badge bg-secondary ms-2" th:text="${prestamos.size()}">0</span>
+                </h5>
+                <div>
+                    <a th:href="@{/prestamos/estadisticas}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-graph-up"></i> Estadísticas
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div th:if="${prestamos != null and !prestamos.empty}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Libro</th>
+                                <th>Fecha Préstamo</th>
+                                <th>Fecha Devolución</th>
+                                <th>Estado</th>
+                                <th>Observaciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="prestamo : ${prestamos}">
+                                <td th:text="${prestamo.id}"></td>
+                                <td>
+                                    <strong th:text="${prestamo.usuario.nombre + ' ' + prestamo.usuario.apellido}"></strong>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-envelope"></i> <span th:text="${prestamo.usuario.email}"></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong th:text="${prestamo.libro.titulo}"></strong>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-person"></i> <span th:text="${prestamo.libro.autor}"></span>
+                                    </div>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-upc-scan"></i> <code th:text="${prestamo.libro.isbn}"></code>
+                                    </div>
+                                </td>
+                                <td th:text="${#temporals.format(prestamo.fechaPrestamo, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <div th:if="${prestamo.fechaDevolucionReal != null}">
+                                        <span class="text-muted">Devuelto:</span>
+                                        <span th:text="${#temporals.format(prestamo.fechaDevolucionReal, 'dd/MM/yyyy')}"></span>
+                                    </div>
+                                    <div th:unless="${prestamo.fechaDevolucionReal != null}">
+                                        <span th:text="${#temporals.format(prestamo.fechaDevolucionEsperada, 'dd/MM/yyyy')}"></span>
+                                        <div th:if="${prestamo.fechaDevolucionEsperada.isBefore(#temporals.createToday())}" 
+                                             class="text-danger small">
+                                            <i class="bi bi-exclamation-triangle"></i> Vencido
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:switch="${prestamo.estado}" class="badge">
+                                        <span th:case="'ACTIVO'" class="badge bg-success">Activo</span>
+                                        <span th:case="'DEVUELTO'" class="badge bg-info">Devuelto</span>
+                                        <span th:case="'VENCIDO'" class="badge bg-danger">Vencido</span>
+                                        <span th:case="'RENOVADO'" class="badge bg-warning">Renovado</span>
+                                        <span th:case="'CANCELADO'" class="badge bg-secondary">Cancelado</span>
+                                        <span th:case="'PERDIDO'" class="badge bg-dark">Perdido</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${prestamo.observaciones != null and !prestamo.observaciones.empty}" 
+                                          th:text="${#strings.abbreviate(prestamo.observaciones, 30)}"></span>
+                                    <span th:unless="${prestamo.observaciones != null and !prestamo.observaciones.empty}" 
+                                          class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <!-- Return Book Button -->
+                                        <button th:if="${prestamo.estado.name() == 'ACTIVO'}" 
+                                                type="button" class="btn btn-sm btn-success" 
+                                                th:onclick="'devolverLibro(' + ${prestamo.id} + ', \'' + ${prestamo.libro.titulo} + '\')'"
+                                                title="Devolver Libro">
+                                            <i class="bi bi-arrow-return-left"></i>
+                                        </button>
+                                        
+                                        <!-- Renew Book Button -->
+                                        <button th:if="${prestamo.estado.name() == 'ACTIVO' and prestamo.fechaDevolucionEsperada.isAfter(#temporals.createToday())}" 
+                                                type="button" class="btn btn-sm btn-warning" 
+                                                th:onclick="'renovarPrestamo(' + ${prestamo.id} + ', \'' + ${prestamo.libro.titulo} + '\')'"
+                                                title="Renovar Préstamo">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                        
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                th:onclick="'confirmarEliminacionPrestamo(' + ${prestamo.id} + ', \'' + ${prestamo.libro.titulo} + '\')'"
+                                                title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Empty State -->
+                <div th:if="${prestamos == null or prestamos.empty}" class="text-center py-5">
+                    <i class="bi bi-journal-bookmark display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">No se encontraron préstamos</h4>
+                    <p class="text-muted">
+                        <span th:if="${estadoSeleccionado != null}">
+                            No hay préstamos con el estado seleccionado.
+                        </span>
+                        <span th:unless="${estadoSeleccionado != null}">
+                            Aún no hay préstamos registrados en el sistema.
+                        </span>
+                    </p>
+                    <a th:href="@{/prestamos/nuevo}" class="btn btn-primary">
+                        <i class="bi bi-plus"></i> Crear Primer Préstamo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="scripts">
+        <script>
+            function devolverLibro(id, titulo) {
+                const observaciones = prompt('¿Deseas agregar alguna observación sobre la devolución?\n\nLibro: ' + titulo);
+                
+                if (observaciones !== null) {
+                    // Crear formulario dinámicamente
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/prestamos/devolver/' + id;
+                    
+                    // Agregar observaciones
+                    const obsInput = document.createElement('input');
+                    obsInput.type = 'hidden';
+                    obsInput.name = 'observaciones';
+                    obsInput.value = observaciones || 'Libro devuelto';
+                    form.appendChild(obsInput);
+                    
+                    // Agregar token CSRF si es necesario
+                    const csrfToken = document.querySelector('meta[name="_csrf"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken.content;
+                        form.appendChild(csrfInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            function renovarPrestamo(id, titulo) {
+                if (confirm('¿Estás seguro de que deseas renovar el préstamo del libro "' + titulo + '"?\n\nSe extenderá la fecha de devolución por 15 días más.')) {
+                    // Crear formulario dinámicamente
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/prestamos/renovar/' + id;
+                    
+                    // Agregar token CSRF si es necesario
+                    const csrfToken = document.querySelector('meta[name="_csrf"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken.content;
+                        form.appendChild(csrfInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            function confirmarEliminacionPrestamo(id, titulo) {
+                if (confirm('¿Estás seguro de que deseas eliminar el préstamo del libro "' + titulo + '"?\n\nEsta acción no se puede deshacer.')) {
+                    // Crear formulario dinámicamente
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/prestamos/eliminar/' + id;
+                    
+                    // Agregar token CSRF si es necesario
+                    const csrfToken = document.querySelector('meta[name="_csrf"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_csrf';
+                        csrfInput.value = csrfToken.content;
+                        form.appendChild(csrfInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>

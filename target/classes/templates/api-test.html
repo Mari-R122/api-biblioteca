@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probador de API - Biblioteca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h2 class="text-center mb-0">
+                            <i class="bi bi-gear"></i> Probador de API REST
+                        </h2>
+                        <p class="text-center mb-0">Prueba los endpoints de la API de Biblioteca</p>
+                        <div class="text-center mt-2">
+                            <a href="/" class="btn btn-light btn-sm">
+                                <i class="bi bi-house"></i> Volver al Inicio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- API Endpoints Info -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-info-circle"></i> Endpoints de la API</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>📚 Libros</h6>
+                                <ul class="list-unstyled small">
+                                    <li><code>GET /api/books</code></li>
+                                    <li><code>POST /api/books</code></li>
+                                    <li><code>GET /api/books/{id}</code></li>
+                                    <li><code>PUT /api/books/{id}</code></li>
+                                    <li><code>DELETE /api/books/{id}</code></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>👥 Usuarios</h6>
+                                <ul class="list-unstyled small">
+                                    <li><code>GET /api/users</code></li>
+                                    <li><code>POST /api/users</code></li>
+                                    <li><code>GET /api/users/{id}</code></li>
+                                    <li><code>PUT /api/users/{id}</code></li>
+                                    <li><code>DELETE /api/users/{id}</code></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>📖 Préstamos</h6>
+                                <ul class="list-unstyled small">
+                                    <li><code>GET /api/loans</code></li>
+                                    <li><code>POST /api/loans</code></li>
+                                    <li><code>GET /api/loans/{id}</code></li>
+                                    <li><code>PUT /api/loans/{id}/return</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-play-circle"></i> Acciones de Prueba</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-success">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-plus-circle text-success display-4 mb-3"></i>
+                                        <h6 class="card-title">Crear Datos de Prueba</h6>
+                                        <p class="card-text small">Crea libros, usuarios y préstamos para probar</p>
+                                        <form method="post" action="/api-test/create-book" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm me-1">
+                                                <i class="bi bi-book"></i> Libro
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/api-test/create-user" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm me-1">
+                                                <i class="bi bi-person"></i> Usuario
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/api-test/create-loan" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="bi bi-journal-bookmark"></i> Préstamo
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-info">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-arrow-clockwise text-info display-4 mb-3"></i>
+                                        <h6 class="card-title">Probar API Directamente</h6>
+                                        <p class="card-text small">Usa estos enlaces para probar los endpoints</p>
+                                        <a href="/api/books" target="_blank" class="btn btn-info btn-sm me-1">
+                                            <i class="bi bi-book"></i> GET Books
+                                        </a>
+                                        <a href="/api/users" target="_blank" class="btn btn-info btn-sm me-1">
+                                            <i class="bi bi-people"></i> GET Users
+                                        </a>
+                                        <a href="/api/loans" target="_blank" class="btn btn-info btn-sm">
+                                            <i class="bi bi-journal-bookmark"></i> GET Loans
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-warning">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-tools text-warning display-4 mb-3"></i>
+                                        <h6 class="card-title">Herramientas</h6>
+                                        <p class="card-text small">Acceso a la base de datos y más</p>
+                                        <a href="/h2-console" target="_blank" class="btn btn-warning btn-sm me-1">
+                                            <i class="bi bi-database"></i> H2 Console
+                                        </a>
+                                        <a href="/" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-house"></i> Inicio
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Data -->
+        <div class="row">
+            <!-- Libros -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="bi bi-book"></i> Libros (<span th:text="${#lists.size(libros)}">0</span>)</h6>
+                        <a href="/api/books" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                        <div th:if="${libros.empty}" class="text-center text-muted">
+                            <i class="bi bi-book display-6"></i>
+                            <p class="small">No hay libros</p>
+                        </div>
+                        <div th:each="libro : ${libros}" class="mb-2 p-2 border rounded">
+                            <h6 class="mb-1" th:text="${libro.titulo}">Título</h6>
+                            <p class="mb-1 small text-muted" th:text="${libro.autor}">Autor</p>
+                            <span th:switch="${libro.estado}" class="badge">
+                                <span th:case="'DISPONIBLE'" class="badge bg-success">Disponible</span>
+                                <span th:case="'PRESTADO'" class="badge bg-warning">Prestado</span>
+                                <span th:case="'EN_REPARACION'" class="badge bg-info">En Reparación</span>
+                                <span th:case="'PERDIDO'" class="badge bg-danger">Perdido</span>
+                                <span th:case="'RETIRADO'" class="badge bg-secondary">Retirado</span>
+                            </span>
+                            <div class="mt-1">
+                                <form method="post" action="/api-test/delete-book" class="d-inline">
+                                    <input type="hidden" name="id" th:value="${libro.id}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar libro?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usuarios -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="bi bi-people"></i> Usuarios (<span th:text="${#lists.size(usuarios)}">0</span>)</h6>
+                        <a href="/api/users" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                        <div th:if="${usuarios.empty}" class="text-center text-muted">
+                            <i class="bi bi-people display-6"></i>
+                            <p class="small">No hay usuarios</p>
+                        </div>
+                        <div th:each="usuario : ${usuarios}" class="mb-2 p-2 border rounded">
+                            <h6 class="mb-1" th:text="${usuario.nombre + ' ' + usuario.apellido}">Nombre</h6>
+                            <p class="mb-1 small text-muted" th:text="${usuario.email}">Email</p>
+                            <span th:switch="${usuario.tipoUsuario}" class="badge">
+                                <span th:case="'BIBLIOTECARIO'" class="badge bg-primary">Bibliotecario</span>
+                                <span th:case="'USUARIO'" class="badge bg-info">Usuario</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Préstamos -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="bi bi-journal-bookmark"></i> Préstamos (<span th:text="${#lists.size(prestamos)}">0</span>)</h6>
+                        <a href="/api/loans" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                        <div th:if="${prestamos.empty}" class="text-center text-muted">
+                            <i class="bi bi-journal-bookmark display-6"></i>
+                            <p class="small">No hay préstamos</p>
+                        </div>
+                        <div th:each="prestamo : ${prestamos}" class="mb-2 p-2 border rounded">
+                            <h6 class="mb-1" th:text="${prestamo.libro.titulo}">Libro</h6>
+                            <p class="mb-1 small text-muted" th:text="${prestamo.usuario.nombre + ' ' + prestamo.usuario.apellido}">Usuario</p>
+                            <span th:switch="${prestamo.estado}" class="badge">
+                                <span th:case="'ACTIVO'" class="badge bg-warning">Activo</span>
+                                <span th:case="'DEVUELTO'" class="badge bg-success">Devuelto</span>
+                                <span th:case="'VENCIDO'" class="badge bg-danger">Vencido</span>
+                                <span th:case="'CANCELADO'" class="badge bg-secondary">Cancelado</span>
+                            </span>
+                            <div class="mt-1" th:if="${prestamo.estado.name() == 'ACTIVO'}">
+                                <form method="post" action="/api-test/return-book" class="d-inline">
+                                    <input type="hidden" name="id" th:value="${prestamo.id}">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('¿Devolver libro?')">
+                                        <i class="bi bi-arrow-return-left"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
